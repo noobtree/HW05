@@ -6,6 +6,11 @@
 #include "GameFramework/Actor.h"
 #include "RandomTranslateActor.generated.h"
 
+// Forward Declaration
+class UInputMappingContext;
+class UInputAction;
+class UInputComponent;
+
 UCLASS()
 class HW05_API ARandomTranslateActor : public AActor
 {
@@ -18,6 +23,14 @@ public:
 	// StaticMesh 에셋을 설정할 수 있는 컴포넌트
 	UPROPERTY(EditAnywhere)
 	TObjectPtr<UStaticMeshComponent> meshComponent;
+
+	// Input Mapping Context 에셋
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Essential Feature")
+	TObjectPtr<UInputMappingContext> inputMappingContextAsset;
+
+	// Input Action 에셋
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Essential Feature")
+	TObjectPtr<UInputAction> inputActionAsset;
 
 #pragma region Initial Setting
 
@@ -38,8 +51,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Essential Feature")
 	float roationSpeedPerSec = 90;
 
+	// 이동 시도 횟수
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Essential Feature")
-	float count = 0;
+	int32 tryCount = 0;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Challenge Feature")
+	int32 actualCount = 0;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Challenge Feature")
+	// 총 이동 거리
+	float totalDistance = 0;
 
 protected:
 	// Called when the game starts or when spawned
@@ -49,11 +70,14 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	UFUNCTION(BlueprintNativeEvent)		// Blueprint에서 수정 가능하도록 매크로 추가
-	void Move(float DeltaTime);	// 함수 이름 설정
-	virtual void Move_Implementation(float DeltaTime);	// Move 함수 기초 정의 작성
+	UFUNCTION()
+	void OnPressKey();
 
 	UFUNCTION(BlueprintNativeEvent)		// Blueprint에서 수정 가능하도록 매크로 추가
-	void Turn(float DeltaTime);	// 함수 이름 설정
-	virtual void Turn_Implementation(float DeltaTime);	// Turn 함수 기초 정의 작성
+	void Move();	// 함수 이름 설정
+	virtual void Move_Implementation();	// Move 함수 기초 정의 작성
+
+	UFUNCTION(BlueprintNativeEvent)		// Blueprint에서 수정 가능하도록 매크로 추가
+	void Turn();	// 함수 이름 설정
+	virtual void Turn_Implementation();	// Turn 함수 기초 정의 작성
 };
